@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Glue crawler for RAW employees CSV data
+
+Resources:
+
+  EmployeesRawCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: raw-employees-crawler
+      Role: glue-crawler-role
+      DatabaseName: raw_db
+      Targets:
+        S3Targets:
+          - Path: s3://aws-etl-raw/employees_global/
+      SchemaChangePolicy:
+        UpdateBehavior: UPDATE_IN_DATABASE
+        DeleteBehavior: LOG
+      RecrawlPolicy:
+        RecrawlBehavior: CRAWL_NEW_FOLDERS_ONLY
+      Configuration: |
+        {
+          "Version": 1.0,
+          "Grouping": {
+            "TableGroupingPolicy": "CombineCompatibleSchemas"
+          }
+        }
